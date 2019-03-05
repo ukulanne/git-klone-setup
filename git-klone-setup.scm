@@ -45,7 +45,7 @@
 Usage: git-klone-setup.scm [options]
 Clones a module from github and creates a backup of current version
   -m,  --module    Module to clone.
-  -o,  --org       Organization to use (aixtools default)
+  -o,  --org       Organization to use (ukulanne default)
   -b,  --branch	   Branch to use.
   -t,  --tag       Tag to use for backup directory
   -v,  --version   Display version.
