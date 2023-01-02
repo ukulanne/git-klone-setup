@@ -29,14 +29,14 @@
 (use-modules (ice-9 getopt-long))
 
 (define VERSION "0.50")
-(define GIT " git@github.ibm.com:")
+(define GIT " git@github.com:")
 (define GIT-GITHUB " https://github.com/")
 (define GIT-PATH  (string-append "/home/" (getlogin) "/src/git/"))
 ;;(define GIT-PATH "/path/to/where/you/clone/from/git/")
 (define NPM #t)
 (define ORG "ukulanne")
 (define MODULE  "git-klone-setup")
-(define BRANCH  "master")
+(define BRANCH  "main")
 (define MODULE-PATH "")
 (define GIT-COMMAND "")
 (define TAG #f)
@@ -52,7 +52,7 @@ Clones a module from github and creates a backup of current version
   -h,  --help	   Display this help.
 
  Copyright (C) 2017-2019 Anne Summers <ukulanne@gmail.com>
- This is free software released under the GNU LPGL 3, 
+ This is free software released under the GNU LGPL 3, 
  and you are welcome to redistribute it under certain conditions.
  Please see <https://www.gnu.org/licenses/ for more information.\n")
 
