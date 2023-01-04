@@ -47,7 +47,7 @@ Clones a module from github and creates a backup of current version
   -v,  --version   Display version.
   -h,  --help      Display this help.
  Copyright (C) 2017-2023 Anne Summers <ukulanne@gmail.com>
- This is free software released under the GNU LPGL 3, 
+ This is free software released under the GNU LGPL 3, 
  and you are welcome to redistribute it under certain conditions.
  Please see <https://www.gnu.org/licenses/ for more information.\n")
 (define (main args)
