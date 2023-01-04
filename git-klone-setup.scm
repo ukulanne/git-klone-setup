@@ -1,16 +1,13 @@
-#!/usr/bin/guile \
+#!/usr/bin/guile3.0 \
 -e main -s
 !#
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Anne Summers                ;;
 ;; ukulanne@gmail.com          ;;
 ;; May 4, 2017                 ;;
 ;; Clone new repo              ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Time-stamp: <2019-02-21 10:58:35 panda> 
-
+;; Time-stamp: <2023-01-03 20:02:52 panda> 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; This program is free software: you can redistribute it and/or modify        ;;
 ;; it under the terms of the GNU Lesser General Public License as published by ;;
@@ -28,36 +25,32 @@
 
 (use-modules (ice-9 getopt-long))
 
-(define VERSION "0.50")
+(define VERSION "0.75")
 (define GIT " git@github.com:")
-(define GIT-GITHUB " https://github.com/")
-(define GIT-PATH  (string-append "/home/" (getlogin) "/src/git/"))
-;;(define GIT-PATH "/path/to/where/you/clone/from/git/")
+(define GIT-PATH  (string-append "/home/panda/src/git/"))
 (define NPM #t)
 (define ORG "ukulanne")
 (define MODULE  "git-klone-setup")
-(define BRANCH  "main")
+(define BRANCH  "dev")
 (define MODULE-PATH "")
 (define GIT-COMMAND "")
 (define TAG #f)
-
+;;(define sed-to-ssh "sed -i 's/https:\\/\\/github.ibm.com\\/AIX-Tools-Team\\//git@github.ibm.com:AIX-Tools-Team\\//' .gitmodules")
+;;(define sed-to-https "sed -i 's/git@github.ibm.com:AIX-Tools-Team/https:\\/\\/github.ibm.com\\/AIX-Tools-Team/' .gitmodules")
 (define HELP "\
 Usage: git-klone-setup.scm [options]
 Clones a module from github and creates a backup of current version
   -m,  --module    Module to clone.
-  -o,  --org       Organization to use (ukulanne default)
-  -b,  --branch	   Branch to use.
+  -o,  --org       Organization to use (aixtools default)
+  -b,  --branch    Branch to use.
   -t,  --tag       Tag to use for backup directory
   -v,  --version   Display version.
-  -h,  --help	   Display this help.
-
- Copyright (C) 2017-2019 Anne Summers <ukulanne@gmail.com>
- This is free software released under the GNU LGPL 3, 
+  -h,  --help      Display this help.
+ Copyright (C) 2017-2023 Anne Summers <ukulanne@gmail.com>
+ This is free software released under the GNU LPGL 3, 
  and you are welcome to redistribute it under certain conditions.
  Please see <https://www.gnu.org/licenses/ for more information.\n")
-
 (define (main args)
-
   (let* ((option-spec '((module  (single-char #\m) (value #t))
                         (org     (single-char #\o) (value #t))
                         (branch  (single-char #\b) (value #t))
@@ -71,7 +64,6 @@ Clones a module from github and creates a backup of current version
          (tag-set        (option-ref options 'tag #f))
          (help-wanted    (option-ref options 'help #f))
          (version-wanted (option-ref options 'version #f)))
-
     (if (or version-wanted help-wanted)
         (begin
           (if version-wanted
@@ -84,20 +76,27 @@ Clones a module from github and creates a backup of current version
           (if org-set    (set! ORG org-set))
           (if branch-set (set! BRANCH branch-set))
           (if tag-set    (set! TAG  tag-set))
-
           (set! MODULE-PATH (string-append GIT-PATH MODULE))
           (set! GIT-COMMAND (string-append "git clone --branch=" BRANCH GIT ORG "/" MODULE ".git"))
           
           (if (file-exists? MODULE-PATH)
                (rename-file MODULE-PATH
-                            (string-append MODULE-PATH "-" 
-                                           (if TAG (string-append TAG "-") "") 
-                                           (strftime "%Y%m%d-%H:%M:%S" (localtime (current-time))))))
+                    (string-append MODULE-PATH "-" 
+                        (if TAG (string-append TAG "-") "") 
+                            (strftime "%Y%m%d-%H:%M:%S" (localtime (current-time))))))
           
-          (system GIT-COMMAND)          
+          (system GIT-COMMAND)
+        ;;  (if (file-exists? (string-append MODULE-PATH "/.gitmodules"))
+          ;;    (system (string-append "cd " MODULE-PATH " && " sed-to-ssh)))
           (system (string-append "cd " MODULE-PATH " && git submodule update --init --recursive --remote"))
-          (if NPM 
-              (system (string-append "cd " MODULE-PATH " && npm install"))
+          ;;(if (file-exists? (string-append MODULE-PATH "/.gitmodules"))
+            ;;  (system (string-append "cd " MODULE-PATH " && " sed-to-https)))
           
-              (if (file-exists? (string-append MODULE-PATH "/server/"))
-                  (system (string-append "cd " MODULE-PATH "/server/ && npm install"))))))))
+          (if (file-exists? (string-append MODULE-PATH "/package.json"))
+              (system (string-append "cd " MODULE-PATH " && npm install")))
+          
+          (system (string-append "cd " MODULE-PATH))
+        )
+    )
+  )
+)
